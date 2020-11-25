@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { useContainer as classValidatorUseContainer } from 'class-validator'
-import { Application, Request } from 'express'
+import { Application } from 'express'
 import glob from 'glob'
 import { createExpressServer, useContainer as routingUseContainer } from 'routing-controllers'
 import { Container } from 'typedi'
@@ -61,7 +61,13 @@ env.app.dirs.subscribers.forEach((pattern) => {
     migrations: env.app.dirs.migrations,
   })
 
-  await createConnection(connectionOptions)
+  const conn = await createConnection(connectionOptions)
+
+  if (conn.isConnected) {
+    console.log('Connected to DB.')
+  } else {
+    console.log('Error in establishing connection to DB.')
+  }
 
   routingUseContainer(Container)
   ormUseContainer(Container)
@@ -89,16 +95,5 @@ const expressApp: Application = createExpressServer({
 })
 
 expressApp.listen(env.app.port)
-
-expressApp.get(
-  env.app.routePrefix,
-  (_: Request, res: any) => {
-    return res.json({
-      name: env.app.name,
-      version: env.app.version,
-      description: env.app.description,
-    })
-  }
-)
 
 banner(new Logger(__filename))

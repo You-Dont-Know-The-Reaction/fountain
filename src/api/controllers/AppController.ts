@@ -11,7 +11,7 @@ class AppResponse {
 export default class App {
   constructor() {}
 
-  @Get('/v1')
+  @Get('/')
   @ResponseSchema(
     AppResponse,
     {
