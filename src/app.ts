@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { useContainer as classValidatorUseContainer } from 'class-validator'
 import { Application, Request } from 'express'
 import glob from 'glob'
@@ -37,7 +38,7 @@ configure({
  * import them manually
  */
 env.app.dirs.subscribers.forEach((pattern) => {
-  glob(pattern, (err: any, files: string[]) => {
+  glob(pattern, (_: any, files: string[]) => {
     for (const file of files) {
       require(file)
     }
@@ -66,7 +67,7 @@ env.app.dirs.subscribers.forEach((pattern) => {
   ormUseContainer(Container)
   classValidatorUseContainer(Container)
 })()
-console.log(env.app.dirs.controllers)
+
 const expressApp: Application = createExpressServer({
   cors: true,
   classTransformer: true,
@@ -91,7 +92,7 @@ expressApp.listen(env.app.port)
 
 expressApp.get(
   env.app.routePrefix,
-  (req: Request, res: any) => {
+  (_: Request, res: any) => {
     return res.json({
       name: env.app.name,
       version: env.app.version,
