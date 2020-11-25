@@ -5,7 +5,7 @@
   "private": true,
   "main": "src/app.ts",
   "scripts": {
-    "build": "npm run clean && npm run transpile",
+    "build": "node ./scripts/build.js",
     "clean": "rimraf dist",
     "lint": "tslint -c ./tslint.json ./src/**/*.ts --format stylish",
     "serve": "nodemon --watch src --watch .env",
@@ -55,6 +55,7 @@
     "@types/uuid": "^8.3.0",
     "@types/winston": "^2.4.4",
     "cross-env": "^7.0.2",
+    "node-cmd": "^4.0.0",
     "nodemon": "^2.0.6",
     "ts-node": "^9.0.0",
     "tslint": "^6.1.3",
