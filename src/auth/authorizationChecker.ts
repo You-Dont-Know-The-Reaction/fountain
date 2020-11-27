@@ -1,5 +1,6 @@
 import { Action } from 'routing-controllers'
 
+import { Repository } from 'typeorm'
 import { UserRepository } from '../api/repositories/UserRepository'
 import { Logger } from '../lib/logger'
 import { AuthService } from './AuthService'
@@ -9,7 +10,7 @@ export function authorizationChecker(): (
   roles: any[],
 ) => Promise<boolean> | boolean {
   const log = new Logger(__filename)
-  const authService = new AuthService(new Logger(__filename), new UserRepository())
+  const authService = new AuthService(new Logger(__filename), new UserRepository(new Repository()))
 
   return async function innerAuthorizationChecker(
     action: Action,
