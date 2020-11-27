@@ -9,7 +9,7 @@ import { UserRepository } from '../repositories/UserRepository'
 import { events } from '../subscribers/events'
 
 @Service()
-export class UserService {
+export default class UserService {
   constructor(
     @OrmRepository() private userRepository: UserRepository,
     @EventDispatcher() private eventDispatcher: EventDispatcherInterface,
@@ -18,7 +18,7 @@ export class UserService {
 
   public find(): Promise<User[]> {
     this.log.info('Find all users')
-    return this.userRepository.find({ relations: ['pets'] })
+    return this.userRepository.find()
   }
 
   public findOne(id: string): Promise<User | undefined> {
