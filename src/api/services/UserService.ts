@@ -7,6 +7,7 @@ import UserModel from '../models/User'
 import UserResponse from '../controllers/responses/UserResponse'
 import { UserRepository } from '../repositories/UserRepository'
 import { events } from '../subscribers/events'
+import EmailAlreadyExist from '../errors/EmailAlreadyExist'
 
 @Service()
 export default class UserService {
@@ -30,8 +31,7 @@ export default class UserService {
     this.log.info('Create a new user => ', user.toString())
     const is_email_already_exist = await this.userRepository.checkEmail(user.email)
     if (is_email_already_exist.length > 0) {
-      // TDO: Send a proper error instance.
-      return 'Email already registered.'
+      return new EmailAlreadyExist()
     }
     else {
       const newUser = await this.userRepository.save(user)
