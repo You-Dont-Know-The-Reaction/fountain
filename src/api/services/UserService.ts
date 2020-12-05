@@ -8,6 +8,7 @@ import UserResponse from '../controllers/responses/UserResponse'
 import { UserRepository } from '../repositories/UserRepository'
 import { events } from '../subscribers/events'
 import EmailAlreadyExist from '../errors/EmailAlreadyExist'
+import UserNotFoundError from '../errors/UserNotFoundError'
 
 @Service()
 export default class UserService {
@@ -24,26 +25,31 @@ export default class UserService {
 
   public findOne(id: string): Promise<UserResponse> {
     this.log.info('Find one user')
-    return this.userRepository.findOne({ id })
+    return this.userRepository.findOne({ where: {id} })
   }
 
-  public async create(user: UserModel): Promise<UserResponse|any> {
-    this.log.info('Create a new user => ', user.toString())
+  public async create(user: UserModel): Promise<UserResponse|EmailAlreadyExist> {
+    this.log.info('Creating a new user.')
     const is_email_already_exist = await this.userRepository.checkEmail(user.email)
     if (is_email_already_exist.length > 0) {
+      this.log.warn('This email already exist => ', user.email.toString())
       return new EmailAlreadyExist()
-    }
-    else {
+    } else {
       const newUser = await this.userRepository.save(user)
       this.eventDispatcher.dispatch(events.user.created, newUser)
       return newUser
     }
   }
 
-  public update(id: string, user: UserModel): Promise<UserResponse> {
-    this.log.info('Update a user')
-    user.id = id
-    return this.userRepository.save(user)
+  public async update(id: string, user: any): Promise<UserResponse|any> {
+    this.log.info('Updating a user.')
+    const userDetail = await this.userRepository.findById(id)
+    if (userDetail.length > 0) {
+      user = { ...userDetail[0], ...user }
+      return this.userRepository.update(user)
+    } else {
+      return new UserNotFoundError()
+    }
   }
 
   public async delete(id: string): Promise<void> {
