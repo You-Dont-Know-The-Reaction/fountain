@@ -1,4 +1,4 @@
-import { Body, Get, JsonController, Param, Post, Put } from 'routing-controllers'
+import { Body, Delete, Get, JsonController, Param, Post, Put } from 'routing-controllers'
 import { ResponseSchema } from 'routing-controllers-openapi'
 
 import uuid from '../../lib/uuid'
@@ -22,6 +22,13 @@ export default class UserController {
     return this.userService.find()
   }
 
+  @Get('/:id')
+  public getDetails(
+    @Param('id') id: string,
+  ): Promise<UserResponse|UserNotFoundError> {
+    return this.userService.findOne(id)
+  }
+
   @Post()
   public register(@Body() user: UserRegisterBody): Promise<UserResponse|EmailAlreadyExist> {
     const userModel = new UserModel(
@@ -41,5 +48,12 @@ export default class UserController {
     @Body() user: any
   ): Promise<UserResponse|UserNotFoundError> {
     return this.userService.update(id, user)
+  }
+
+  @Delete('/:id')
+  public async remove(
+    @Param('id') id:string
+  ): Promise<string|UserNotFoundError> {
+    return this.userService.delete(id)
   }
 }

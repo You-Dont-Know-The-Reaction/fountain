@@ -23,9 +23,15 @@ export default class UserService {
     return this.userRepository.find()
   }
 
-  public findOne(id: string): Promise<UserResponse> {
+  public async findOne(id: string): Promise<UserResponse|UserNotFoundError> {
     this.log.info('Find one user')
-    return this.userRepository.findOne({ where: {id} })
+    const userDetail = await this.userRepository.findById(id)
+    if (userDetail.length > 0) {
+      delete userDetail[0].key
+      return new Promise((res, _) => res(userDetail[0]))
+    } else {
+      return new UserNotFoundError()
+    }
   }
 
   public async create(user: UserModel): Promise<UserResponse|EmailAlreadyExist> {
@@ -52,9 +58,15 @@ export default class UserService {
     }
   }
 
-  public async delete(id: string): Promise<void> {
+  public async delete(id: string): Promise<string|UserNotFoundError> {
     this.log.info('Delete a user')
-    await this.userRepository.delete(id)
-    return
+    const userDetail = await this.userRepository.findById(id)
+    if (userDetail.length > 0) {
+      const res = await this.userRepository.delete(id)
+      this.log.info(JSON.stringify(res))
+      return 'User details deleted successfully.'
+    } else {
+      return new UserNotFoundError()
+    }
   }
 }

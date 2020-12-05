@@ -16,7 +16,7 @@ export class UserRepository extends Repository<UserModel>  {
   }
 
   public findById(id: string): Promise<any> {
-    return this.repo.query(QUERY.CHECK_EMAIL, [id])
+    return this.repo.query(QUERY.GET_USER_BY_ID, [id])
   }
 
   public async save(user: any): Promise<any> {
@@ -54,6 +54,12 @@ export class UserRepository extends Repository<UserModel>  {
     return this.repo.query(
       QUERY.CHECK_EMAIL,
       [email]
+    )
+  }
+
+  public async delete(id: string): Promise<any> {
+    return this.repo.query(
+      QUERY.DELETE_USER_BY_ID, [id]
     )
   }
 }
