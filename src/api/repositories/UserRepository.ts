@@ -20,7 +20,7 @@ export class UserRepository extends Repository<UserModel>  {
   }
 
   public findUser(username: string): Promise<any> {
-    return this.repo.query(`select * from users where email=$1`, [username])
+    return this.repo.query(QUERY.GET_USER_BY_EMAIL, [username])
   }
 
   public async save(user: any): Promise<any> {
