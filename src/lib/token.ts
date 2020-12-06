@@ -1,3 +1,4 @@
+require('dotenv').config()
 import jwt from 'jsonwebtoken'
 
 export default function generateToken(email: string, id: string) {
@@ -6,9 +7,9 @@ export default function generateToken(email: string, id: string) {
       email: email,
       user_id: id,
     },
-    '02335555688888889',
+    process.env.APP_KEY,
     {
-      expiresIn: '24h'
+      expiresIn: process.env.APP_EXPIRES_IN
     }
   )
 }
