@@ -32,11 +32,12 @@ export class AuthService {
   public async validateUser(username: string, password: string): Promise<UserModel> {
     const user = await this.userRepository.findOne({
       where: {
+        // TODO: change the where clause
         username,
       },
     })
 
-    if (await UserModel.compare(user, password)) {
+    if (await UserModel.compare(user.key, password)) {
       return user
     }
 

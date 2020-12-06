@@ -1,4 +1,4 @@
-import { Body, Delete, Get, JsonController, Param, Post, Put } from 'routing-controllers'
+import { Body, Delete, Get, HeaderParam, JsonController, Param, Post, Put } from 'routing-controllers'
 import { ResponseSchema } from 'routing-controllers-openapi'
 
 import uuid from '../../lib/uuid'
@@ -7,6 +7,7 @@ import UserService from '../services/UserService'
 import UserResponse from './responses/UserResponse'
 import UserRegisterBody from './requests/UserRegister'
 
+import InvalidAuthToken from '../errors/InvalidAuthToken'
 import EmailAlreadyExist from '../errors/EmailAlreadyExist'
 import UserNotFoundError from '../errors/UserNotFoundError'
 
@@ -22,6 +23,22 @@ export default class UserController {
     return this.userService.find()
   }
 
+  @Get('/login')
+  public async login(@HeaderParam('authorization') token: string): Promise<any|InvalidAuthToken> {
+    if (token && token.split(' ')[0] === 'Bearer') {
+      const decodedBase64 = Buffer.from(token.split(' ')[1], 'base64').toString('ascii')
+      const username = decodedBase64.split(':')[0]
+      const key = decodedBase64.split(':')[1]
+      if (username && key) {
+        return this.userService.login(username, key)
+      } else {
+        return new InvalidAuthToken()
+      }
+    } else {
+      return new InvalidAuthToken()
+    }
+  }
+
   @Get('/:id')
   public getDetails(
     @Param('id') id: string,
@@ -30,11 +47,12 @@ export default class UserController {
   }
 
   @Post()
-  public register(@Body() user: UserRegisterBody): Promise<UserResponse|EmailAlreadyExist> {
+  public async register(@Body() user: UserRegisterBody): Promise<UserResponse|EmailAlreadyExist> {
+    const key = await UserModel.hashkey(user.key)
     const userModel = new UserModel(
       user.full_name,
       user.email,
-      user.key,
+      key,
       uuid(),
       new Date(),
       false

@@ -4,9 +4,14 @@ import { OrmRepository } from 'typeorm-typedi-extensions'
 import { EventDispatcher, EventDispatcherInterface } from '../../decorators/EventDispatcher'
 import { Logger, LoggerInterface } from '../../decorators/Logger'
 import UserModel from '../models/User'
+import LoginResponse from '../controllers/responses/LoginResponse'
 import UserResponse from '../controllers/responses/UserResponse'
 import { UserRepository } from '../repositories/UserRepository'
 import { events } from '../subscribers/events'
+import generateToken from '../../lib/token'
+
+import EmailIDNotExist from '../errors/EmailIDNotExist'
+import InvalidPassword from '../errors/InvalidPassword'
 import EmailAlreadyExist from '../errors/EmailAlreadyExist'
 import UserNotFoundError from '../errors/UserNotFoundError'
 
@@ -67,6 +72,24 @@ export default class UserService {
       return 'User details deleted successfully.'
     } else {
       return new UserNotFoundError()
+    }
+  }
+
+  public async login(username: string, key: string): Promise<LoginResponse|InvalidPassword|EmailIDNotExist> {
+    const user = await this.userRepository.findUser(username)
+
+    if (user.length > 0) {
+      if (await UserModel.compare(user[0].key, key)) {
+        delete user.key
+        return {
+          user,
+          token: generateToken(user.email, user.id)
+        }
+      } else {
+        return new InvalidPassword()
+      }
+    } else {
+      return new EmailIDNotExist()
     }
   }
 }

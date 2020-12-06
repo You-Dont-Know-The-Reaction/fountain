@@ -52,9 +52,9 @@ export default class UserModel implements IBaseUser {
     })
   }
 
-  public static compare(user: UserModel, key: string): Promise<boolean> {
+  public static compare(userkey: string, key: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      bcrypt.compare(key, user.key, (err, res) => {
+      bcrypt.compare(key, userkey, (err, res) => {
         if (err) {
           return reject(err)
         }

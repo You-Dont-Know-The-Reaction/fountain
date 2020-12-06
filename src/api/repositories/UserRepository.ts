@@ -19,6 +19,10 @@ export class UserRepository extends Repository<UserModel>  {
     return this.repo.query(QUERY.GET_USER_BY_ID, [id])
   }
 
+  public findUser(username: string): Promise<any> {
+    return this.repo.query(`select * from users where email=$1`, [username])
+  }
+
   public async save(user: any): Promise<any> {
     let result = await this.repo.query(
       QUERY.CREATE_USER,
@@ -26,7 +30,7 @@ export class UserRepository extends Repository<UserModel>  {
     )
 
     return new Promise((res, _) => {
-      let data = result[0][0]
+      let data = result[0]
       delete data.key
       res(data)
     })
