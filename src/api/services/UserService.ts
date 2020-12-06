@@ -80,7 +80,7 @@ export default class UserService {
 
     if (user.length > 0) {
       if (await UserModel.compare(user[0].key, key)) {
-        delete user.key
+        delete user[0].key
         return {
           user: user[0],
           token: generateToken(user.email, user.id)
