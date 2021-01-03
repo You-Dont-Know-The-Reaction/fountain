@@ -32,6 +32,27 @@ Go to the project dir and start your app with this yarn script.
 npm run serve
 ```
 
+## ❯ Creating Migrations
+
+Go to the project root dir and run this npm script:
+
+```bash
+npm run typeorm:cli -- migration:create -n <name>
+```
+
+It will create a new file in `src/database/migrations/` where you can write your query.
+After that run this command to run the migration:
+
+```bash
+npm run typeorm:cli -- migration:run
+```
+
+If you decide that you need to cancel the changes that are applied it, you can do so with the revert command:
+
+```bash
+npm run typeorm:cli -- migration:revert
+```
+
 ## ❯ API Routes
 
 The route prefix is `/api` by default, but you can change this in the .env file.
