@@ -10,8 +10,8 @@ export class CreateTicketActivityLogTable1609698215580 implements MigrationInter
 	  tid uuid NOT NULL,                            -- ticket id for its activity
 	  action_type character varying(200) NOT NULL,  -- what kind of action it was?
 	  action_by uuid NOT NULL,                      -- action perform by user
-	  to character varying(255),                    -- new value
-	  from character varying(255),                  -- old value
+	  old_val character varying(255),                    -- new value
+	  new_val character varying(255),                  -- old value
 	  description text,                             -- a brief description
 	  created_at timestamp with time zone 
 );

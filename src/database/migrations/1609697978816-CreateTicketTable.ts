@@ -7,7 +7,7 @@ export class CreateTicketTable1609697978816 implements MigrationInterface {
 `
 CREATE TABLE IF NOT EXISTS public.ticket
 (
-	  -- tid uuid NOT NULL,                        -- ticket id
+	  id uuid NOT NULL,                        -- ticket id
     ticket_id bigserial NOT NULL,                -- ticket id
     parent_id bigserial,                         -- child ticket
     product character varying(100),              -- root area of product
