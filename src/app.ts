@@ -45,7 +45,10 @@ env.app.dirs.subscribers.forEach((pattern) => {
   })
 });
 
-(async () => {
+(async () => {  
+  routingUseContainer(Container)
+  ormUseContainer(Container)
+  classValidatorUseContainer(Container)
   const loadedConnectionOptions = await getConnectionOptions()
 
   const connectionOptions = Object.assign(loadedConnectionOptions, {
@@ -68,10 +71,6 @@ env.app.dirs.subscribers.forEach((pattern) => {
   } else {
     console.log('Error in establishing connection to DB.')
   }
-
-  routingUseContainer(Container)
-  ormUseContainer(Container)
-  classValidatorUseContainer(Container)
 })()
 
 const expressApp: Application = createExpressServer({
