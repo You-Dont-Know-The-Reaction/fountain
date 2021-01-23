@@ -1,17 +1,22 @@
 import 'reflect-metadata'
+import { resolve } from 'path'
 import { useContainer as classValidatorUseContainer } from 'class-validator'
 import { Application } from 'express'
+import { graphqlHTTP } from 'express-graphql'
 import glob from 'glob'
 import { createExpressServer, useContainer as routingUseContainer } from 'routing-controllers'
 import { Container } from 'typedi'
 import { createConnection, getConnectionOptions, useContainer as ormUseContainer } from 'typeorm'
 import { configure, format, transports } from 'winston'
+import { buildSchema } from 'type-graphql'
 
 import { authorizationChecker } from './auth/authorizationChecker'
 import { currentUserChecker } from './auth/currentUserChecker'
 import env from './env'
 import { banner } from './lib/banner'
 import { Logger } from './lib/logger'
+import { UserResolver } from './api/resolvers'
+import { getErrorCode, getErrorMessage, handlingErrors } from './lib/graphql'
 
 // winstonLoader
 configure({
@@ -92,6 +97,39 @@ const expressApp: Application = createExpressServer({
   authorizationChecker: authorizationChecker(),
   currentUserChecker: currentUserChecker(),
 })
+
+(async () => {
+  if (env.graphql.enabled) {
+    const schema = await buildSchema({
+      resolvers: [UserResolver],
+      container: Container,
+      // automatically create `schema.gql` file with schema definition in current folder
+      emitSchemaFile: resolve(__dirname, '../api', 'schema.gql'),
+    })
+
+    handlingErrors(schema)
+
+    expressApp.use(env.graphql.route, (request: any, response: any) => {
+      // Build GraphQLContext
+      const requestId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER); // uuid-like
+      const container = Container.of(requestId); // get scoped container
+      const context = { requestId, container, request, response }; // create our context
+      container.set('context', context); // place context or other data in container
+
+      // Setup GraphQL Server
+      graphqlHTTP({
+        schema,
+        context,
+        graphiql: env.graphql.editor,
+        formatError: error => ({
+            code: getErrorCode(error.message),
+            message: getErrorMessage(error.message),
+            path: error.path,
+        }),
+      })(request, response)
+    })
+  }
+})()
 
 expressApp.listen(env.app.port)
 
