@@ -1,0 +1,25 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.formatOnSaveMode": "modifications",
+  "editor.minimap.enabled": false,
+  "editor.cursorBlinking": "solid",
+  "editor.cursorStyle": "block",
+  "workbench.editor.wrapTabs": true,
+  "prettier.arrowParens": "always",
+  "prettier.embeddedLanguageFormatting": "auto",
+  "prettier.enable": true,
+  "prettier.endOfLine": "auto",
+  "prettier.jsxBracketSameLine": false,
+  "prettier.jsxSingleQuote": true,
+  "prettier.printWidth": 100,
+  "prettier.semi": false,
+  "prettier.singleQuote": true,
+  "prettier.tabWidth": 2,
+  "workbench.editor.decorations.colors": true,
+  "workbench.editor.decorations.badges": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+}
