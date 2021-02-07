@@ -82,8 +82,8 @@ export default class UserService {
       if (await UserModel.compare(user[0].key, key)) {
         delete user[0].key
         return {
-          user: user[0],
-          token: generateToken(user.email, user.id)
+          // user: user[0],
+          token: generateToken(user)
         }
       } else {
         return new InvalidPassword()

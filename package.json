@@ -11,7 +11,8 @@
     "serve": "nodemon --watch src --watch .env",
     "serve:inspect": "nodemon --watch src --watch .env --inspect",
     "start": "cross-env NODE_ENV=production node dist/app.js",
-    "transpile": "tsc --project ./tsconfig.json"
+    "transpile": "tsc --project ./tsconfig.json",
+    "typeorm:cli": "ts-node ./node_modules/typeorm/cli -f ./src/ormconfig.ts"
   },
   "repository": {
     "type": "git",
